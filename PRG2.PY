@@ -60,10 +60,20 @@ class Canon(pygame.sprite.Sprite):
     def Y_coord(self,t):
         return SCREENSIZE_Y -(-GRAVITY*(t**2)/2 + self.speed0*math.sin(self.teta0)*t)
 
-    #Rocket position
+    #Rocket position update
     def update(self):
         self.counter += 1
         self.rect.center = (self.X_coord(self.counter), self.Y_coord(self.counter))
+
+        # Keep the rocket on the screen
+        if self.rect.left < 0:
+            self.rect.left = 0
+        if self.rect.right > SCREENSIZE_X:
+            self.rect.right = SCREENSIZE_X
+        if self.rect.top <= 0:
+            self.rect.top = 0
+        if self.rect.bottom >= SCREENSIZE_Y:
+            self.rect.bottom = SCREENSIZE_Y
 
 # Instantiate canon
 canon = Canon()
