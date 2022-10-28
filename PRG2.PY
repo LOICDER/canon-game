@@ -28,13 +28,6 @@ SCREENSIZE_Y = 250 #m
 
 #Physics constants
 GRAVITY = 9.81 #m/s^2
-teta0 = math.pi/3
-speed0 = 60 #m/s
-
-#Canon physics functions
-X_coord = lambda t: speed0*math.cos(teta0)*t
-Y_coord = lambda t: SCREENSIZE_Y -(-GRAVITY*(t**2)/2 + speed0*math.sin(teta0)*t)
-
 
 #Time settings
 counter = 0
@@ -49,21 +42,31 @@ screen = pygame.display.set_mode([SCREENSIZE_X, SCREENSIZE_Y])
 # Define a player object by extending pygame.sprite.Sprite
 # The surface drawn on the screen is now an attribute of 'player'
 
-class Player(pygame.sprite.Sprite):
+
+class Canon(pygame.sprite.Sprite):
 
     def __init__(self):
-        super(Player, self).__init__()
+        super(Canon, self).__init__()
         self.surf = pygame.Surface((10, 10))
         self.surf.fill((0, 0, 0))
         self.rect = self.surf.get_rect()
+        self.teta0 = math.pi/3              #!!!!!!!!!!!!!!!!!
+        self.speed0 = 70 #m/s               #!!!!!!!!!!!!!!!!!
+        self.counter = 0           #!!!!!!!!!!!!!!!!!
 
-    # Move the sprite based on user keypresses
-    def update(self, X,Y):
-            self.rect.center = (X, Y)
+    def X_coord(self,t):
+        return self.speed0*math.cos(self.teta0)*t
+    
+    def Y_coord(self,t):
+        return SCREENSIZE_Y -(-GRAVITY*(t**2)/2 + self.speed0*math.sin(self.teta0)*t)
 
-# Instantiate player. Right now, this is just a rectangle.
-player = Player()
+    #Rocket position
+    def update(self):
+        self.counter += 1
+        self.rect.center = (self.X_coord(self.counter), self.Y_coord(self.counter))
 
+# Instantiate canon
+canon = Canon()
 
 # Run until the user asks to quit
 running = True
@@ -78,8 +81,7 @@ while running:
                 running = False
         elif event.type == timer_event:
             #changes rocket position
-            counter += 1
-            player.update(X_coord(counter), Y_coord(counter))
+            canon.update()    #!!!!!!!!!!!!!!!!!!!!!!!!
             
         elif event.type == pygame.QUIT:
             running = False
@@ -91,7 +93,7 @@ while running:
     pygame.draw.circle(screen, (250, 250, 250), (10, SCREENSIZE_Y -10), 5)
 
     # Draw the player on the screen
-    screen.blit(player.surf, player.rect)
+    screen.blit(canon.surf, canon.rect)
 
     # update the display
     clock.tick(frames_per_second)
